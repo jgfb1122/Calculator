@@ -47,22 +47,13 @@ class ViewController: UIViewController {
     
     @IBAction func operate(_ sender: UIButton) {
         
-        if historyDataStarted
-        {
-            historyDisplay.text =  historyDisplay.text! + ", " + sender.currentTitle!
-        }
-        else
-        {
-            historyDisplay.text = sender.currentTitle!
-            historyDataStarted = true
-        }
-        
         if userIsInTheMiddleOfTypingANumber{
             enter()
         }
         if let operation = sender.currentTitle{
             if let result = brain.performOperation(operation){
-               displayValue = result
+                displayValue = result
+                historyDisplay.text = "\(brain.description) = \(result)"
             } else{
                 displayValue = 0
             }
@@ -73,15 +64,6 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTypingANumber = false
         decimalCount = 0
         
-        if historyDataStarted
-        {
-         historyDisplay.text =  historyDisplay.text! + ", " + display.text!
-        }
-        else
-        {
-            historyDisplay.text = display.text!
-            historyDataStarted = true
-        }
         if displayValue != nil{
             if let result = brain.pushOperand(displayValue!)
             {
@@ -90,6 +72,9 @@ class ViewController: UIViewController {
         } else{
             displayValue = nil
         }
+        
+        historyDisplay.text = brain.description
+
 
     }
     
@@ -113,7 +98,8 @@ class ViewController: UIViewController {
             else
             {
                 if display.text! == "X" || display.text! == "Y" {
-                    brain.pushOperand(display.text!)
+                    let check = brain.pushOperand(display.text!)
+                    print(check ?? "")
                 }
                 else{
                     display.text! = "Error invalid number"

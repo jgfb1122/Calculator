@@ -14,30 +14,45 @@ class CalculatorBrain
     fileprivate enum Op
     {
         case operand(Double?)
-        case symbols(String?)
+        case symbols(String)
         case unaryOperation(String, (Double) -> Double?)
-        case binaryOperation(String, (Double, Double) -> Double?)
+        case binaryOperation(String, Int, (Double, Double) -> Double?)
         
         fileprivate var description:String{
             get{
                 switch self {
                     
                 case .operand(let operand):
-                    return "\(operand)"
+                    return "\(operand!)"
                     
                 case .symbols(let symbol):
-                    return symbol!
+                    return symbol
                     
                 case .unaryOperation(let symbol, _):
                     return symbol
                     
-                case .binaryOperation(let symbol, _):
+                case .binaryOperation(let symbol, _, _):
                     return symbol
                 }
                 
             }
         }
 
+    }
+    
+    var description: String{
+        get{
+            var descriptionReturn = ""
+            var opsReturn = opStack
+            
+            repeat{
+                let (additionalDesc, additionalOps) = describe(opsReturn)
+                descriptionReturn = descriptionReturn.isEmpty ? additionalDesc : additionalDesc+", "+descriptionReturn
+                opsReturn = additionalOps
+            } while !opsReturn.isEmpty
+            
+            return descriptionReturn
+        }
     }
     
     
@@ -48,15 +63,40 @@ class CalculatorBrain
     
     init()
     {
-        knownOps["×"] = Op.binaryOperation("×", *)
-        knownOps["÷"] = Op.binaryOperation("÷"){$1 / $0}
-        knownOps["−"] = Op.binaryOperation("−"){$1 - $0}
-        knownOps["+"] = Op.binaryOperation("+", +)
+        knownOps["×"] = Op.binaryOperation("×", 3, *)
+        knownOps["÷"] = Op.binaryOperation("÷", 2){$1 / $0}
+        knownOps["−"] = Op.binaryOperation("−", 2){$1 - $0}
+        knownOps["+"] = Op.binaryOperation("+", 3, +)
         
         knownOps["√"] = Op.unaryOperation("√", sqrt)
         knownOps["π"] = Op.unaryOperation("π"){_ in return pi}
         knownOps["sin"] = Op.unaryOperation("sin", sin)
         knownOps["cos"] = Op.unaryOperation("cos", cos)
+    }
+    
+    private func describe(_ currentOps: [Op], currentOpPrecedence: Int = 0) -> (description: String, remainingOps: [Op]) {
+        var currentOps = currentOps
+        if !currentOps.isEmpty {
+            let op = currentOps.removeLast()
+            switch op  {
+            case .operand:
+                return (op.description, currentOps)
+            case .symbols:
+                return (op.description, currentOps)
+            case .unaryOperation:
+                let (operandDesc, remainingOps) = describe(currentOps)
+                return ( op.description+"("+operandDesc+")", remainingOps)
+            case .binaryOperation(_, let precedence, _):
+                let (operandDesc1, remainingOps1) = describe(currentOps, currentOpPrecedence: precedence)
+                let (operandDesc2, remainingOps2) = describe(remainingOps1, currentOpPrecedence: precedence)
+                if precedence < currentOpPrecedence {
+                    return ("("+operandDesc2+op.description+operandDesc1+")", remainingOps2)
+                } else {
+                    return (operandDesc2+op.description+operandDesc1, remainingOps2)
+                }
+            }
+        }
+        return ("?", currentOps)
     }
     
     fileprivate func evaluate (_ ops: [Op]) -> (result: Double?,remainingOps: [Op])
@@ -75,10 +115,10 @@ class CalculatorBrain
                     return (operand, remainingOps)
                     
                 case .symbols(let symbol):
-                    let operand = variableValue[symbol!]
+                    let operand = variableValue[symbol]
                     if operand == nil && evaluate(remainingOps).result != nil{
-                        variableValue[symbol!] = evaluate(remainingOps).result
-                        return( variableValue[symbol!]!, remainingOps)
+                        variableValue[symbol] = evaluate(remainingOps).result
+                        return( variableValue[symbol]!, remainingOps)
                     }else if operand == nil && evaluate(remainingOps).result != nil{
                         return( nil, remainingOps)
                     }
@@ -89,7 +129,7 @@ class CalculatorBrain
                     if let operand = operandEvalute.result {
                         return(operation(operand), operandEvalute.remainingOps)
                     }
-                case .binaryOperation(_, let operation):
+                case .binaryOperation(_, _, let operation):
                     let op1Evalution = evaluate(remainingOps)
                     if let operand1 = op1Evalution.result
                     {
@@ -134,5 +174,15 @@ class CalculatorBrain
         }
         return evaluate()
     }
+    
+    func performDescription(_ symbol: String) -> Double?
+    {
+        if let operation = knownOps[symbol]
+        {
+            opStack.append(operation)
+        }
+        return evaluate()
+    }
+
     
 }
