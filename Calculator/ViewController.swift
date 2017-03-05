@@ -10,6 +10,7 @@ import UIKit
 import Darwin
 
 let pi = M_PI
+fileprivate let varList = ["X", "Y", "M"]
 
 class ViewController: UIViewController {
 
@@ -29,10 +30,38 @@ class ViewController: UIViewController {
         brain.reset()
     }
     
+    func refreshDisplayValues(){
+        if brain.evaluate() != nil{
+            historyDisplay.text = "\(brain.description) = \(brain.evaluate()!)"
+            display.text = "\(brain.evaluate()!)"
+        }else{
+            historyDisplay.text = "\(brain.description)"
+        }
+    }
+    
+    @IBAction func setValueOfM(_ sender: UIButton) {
+        userIsInTheMiddleOfTypingANumber = false
+        
+        if display.text != nil{
+            let variableM = display.text!
+            print(brain.setValueOfM(newValue: Double(variableM)!) ?? "uh oh, not a valid number")
+            
+            refreshDisplayValues()
+        }else{
+            displayValue = nil
+        }
+    }
+    
+    @IBAction func placeValueOfM(_ sender: UIButton) {
+        let variableM = sender.currentTitle!
+        brain.pushOperand(variableM)
+        refreshDisplayValues()
+        display.text = variableM
+    }
+    
+
     @IBAction func appendDigit(_ sender: UIButton) {
         let digit = sender.currentTitle!
-       
-        
         
         if userIsInTheMiddleOfTypingANumber
         {
@@ -55,6 +84,7 @@ class ViewController: UIViewController {
                 displayValue = result
                 historyDisplay.text = "\(brain.description) = \(result)"
             } else{
+                historyDisplay.text = "\(brain.description)"
                 displayValue = 0
             }
         }
@@ -62,7 +92,6 @@ class ViewController: UIViewController {
     
     @IBAction func enter() {
         userIsInTheMiddleOfTypingANumber = false
-        decimalCount = 0
         
         if displayValue != nil{
             if let result = brain.pushOperand(displayValue!)
@@ -74,8 +103,6 @@ class ViewController: UIViewController {
         }
         
         historyDisplay.text = brain.description
-
-
     }
     
     var displayValue: Double? {
@@ -97,7 +124,7 @@ class ViewController: UIViewController {
             }
             else
             {
-                if display.text! == "X" || display.text! == "Y" {
+                if display.text! == varList[0] || display.text! == varList[1] || display.text! == varList[2] {
                     let check = brain.pushOperand(display.text!)
                     print(check ?? "")
                 }

@@ -255,7 +255,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d5e-Id-NgL">
                                 <rect key="frame" x="158" y="556.5" width="59" height="102.5"/>
                                 <color key="backgroundColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="=">
+                                <state key="normal" title="?">
                                     <color key="titleColor" red="0.23865625108190913" green="1" blue="0.97670058487908407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
@@ -268,6 +268,9 @@
                                 <state key="normal" title="M">
                                     <color key="titleColor" red="0.23865625108190913" green="1" blue="0.97670058487908407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="placeValueOfM:" destination="BYZ-38-t0r" eventType="touchUpInside" id="QGK-OH-zCi"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LdX-vd-1jk">
                                 <rect key="frame" x="225" y="556.5" width="59" height="102.5"/>
@@ -275,6 +278,9 @@
                                 <state key="normal" title="→M">
                                     <color key="titleColor" red="0.23865625108190913" green="1" blue="0.97670058487908407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="setValueOfM:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FoB-43-vWd"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="02d-Q7-Gxm">
                                 <rect key="frame" x="24" y="556.5" width="59" height="102.5"/>

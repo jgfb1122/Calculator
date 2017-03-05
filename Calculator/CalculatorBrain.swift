@@ -113,16 +113,17 @@ class CalculatorBrain
 
                     let operand = Double(operand!)
                     return (operand, remainingOps)
-                    
+                
                 case .symbols(let symbol):
                     let operand = variableValue[symbol]
-                    if operand == nil && evaluate(remainingOps).result != nil{
+                    if operand == nil && evaluate(remainingOps).result != nil && symbol != "M"{
                         variableValue[symbol] = evaluate(remainingOps).result
                         return( variableValue[symbol]!, remainingOps)
-                    }else if operand == nil && evaluate(remainingOps).result != nil{
+                    }else if operand == nil {
                         return( nil, remainingOps)
+                    }else{
+                        return(variableValue[symbol]!,remainingOps)
                     }
-                    return (operand!, remainingOps)
                 
                 case .unaryOperation(_, let operation):
                     let operandEvalute = evaluate(remainingOps)
@@ -145,6 +146,7 @@ class CalculatorBrain
     
     func reset(){
         opStack = [Op]()
+        variableValue.removeValue(forKey: "M")
     }
     
     func evaluate() -> Double?
@@ -183,6 +185,14 @@ class CalculatorBrain
         }
         return evaluate()
     }
-
     
+    func setValueOfM(newValue: Double)->Double?
+    {
+        variableValue["M"] = newValue
+        if variableValue["M"] != nil{
+            return variableValue["M"]!
+        }else{
+            return nil
+        }
+    }
 }
