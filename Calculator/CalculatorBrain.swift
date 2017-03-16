@@ -60,6 +60,7 @@ class CalculatorBrain
     fileprivate var knownOps = [String:Op]()
     fileprivate var wantToChangeVariable = false
     fileprivate var variableValue = [String: Double?]()
+    fileprivate let constantValues = ["π":pi, "Ω":0]
     
     init()
     {
@@ -69,9 +70,10 @@ class CalculatorBrain
         knownOps["+"] = Op.binaryOperation("+", 3, +)
         
         knownOps["√"] = Op.unaryOperation("√", sqrt)
-        knownOps["π"] = Op.unaryOperation("π"){_ in return pi}
         knownOps["sin"] = Op.unaryOperation("sin", sin)
         knownOps["cos"] = Op.unaryOperation("cos", cos)
+        
+        knownOps["π"] = Op.symbols("π")
     }
     
     private func describe(_ currentOps: [Op], currentOpPrecedence: Int = 0) -> (description: String, remainingOps: [Op]) {
@@ -81,11 +83,14 @@ class CalculatorBrain
             switch op  {
             case .operand:
                 return (op.description, currentOps)
+            
             case .symbols:
                 return (op.description, currentOps)
+            
             case .unaryOperation:
                 let (operandDesc, remainingOps) = describe(currentOps)
                 return ( op.description+"("+operandDesc+")", remainingOps)
+
             case .binaryOperation(_, let precedence, _):
                 let (operandDesc1, remainingOps1) = describe(currentOps, currentOpPrecedence: precedence)
                 let (operandDesc2, remainingOps2) = describe(remainingOps1, currentOpPrecedence: precedence)
@@ -115,6 +120,8 @@ class CalculatorBrain
                     return (operand, remainingOps)
                 
                 case .symbols(let symbol):
+                    if symbol == "π"{return (pi, remainingOps)}
+                    
                     let operand = variableValue[symbol]
                     if operand == nil && evaluate(remainingOps).result != nil && symbol != "M"{
                         variableValue[symbol] = evaluate(remainingOps).result
@@ -146,7 +153,7 @@ class CalculatorBrain
     
     func reset(){
         opStack = [Op]()
-        variableValue.removeValue(forKey: "M")
+        variableValue.removeAll()
     }
     
     func evaluate() -> Double?

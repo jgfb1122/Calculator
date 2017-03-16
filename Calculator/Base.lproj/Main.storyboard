@@ -79,7 +79,7 @@
                                     <color key="titleColor" red="0.23865625108190913" green="1" blue="0.97670058487908407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ItM-7p-nFi"/>
+                                    <action selector="operate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="RdR-2W-Eqb"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aCR-uD-sDR">
